@@ -1,0 +1,27 @@
+# Local PDF manual (kept strictly local as requested)
+SENTINEL_CYBER_FOUNDATION.pdf
+
+# Quarantine vault (malware binaries must never be pushed to git)
+vault/*.vault
+vault/*.bin
+
+# Cache and temporary analysis dumps
+intel_cache/incoming_scans/*
+intel_cache/incoming_mail/*
+intel_cache/sandbox/*
+intel_cache/test_samples/*
+!intel_cache/.gitkeep
+
+# Python cache & virtual environment
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+venv/
+env/
+.venv/
+
+# System files
+Thumbs.db
+.DS_Store

@@ -1,0 +1,36 @@
+{
+  "suspicious_apis": [
+    "VirtualAlloc", "VirtualAllocEx", "WriteProcessMemory", "CreateRemoteThread",
+    "OpenProcess", "SetWindowsHookExA", "SetWindowsHookExW", "GetAsyncKeyState",
+    "GetKeyboardState", "InternetOpenA", "HttpOpenRequestA", "WinExec",
+    "ShellExecuteA", "CreateProcessInternalW", "QueueUserAPC", "RtlMoveMemory",
+    "NtCreateThreadEx", "NtWriteVirtualMemory", "IsDebuggerPresent",
+    "CheckRemoteDebuggerPresent", "RegSetValueExA", "RegCreateKeyExA"
+  ],
+  "malware_signatures": [
+    {"name": "Reverse_TCP_Payload", "pattern": "(\\x6a\\x02\\x5b\\x6a\\x01\\x5a|reverse_tcp|meterpreter)", "severity": 95},
+    {"name": "PowerShell_Obfuscated_B64", "pattern": "(powershell.*-e(nc(odedcommand)?)?\\s+[A-Za-z0-9+/=]{20,})", "severity": 85},
+    {"name": "VBScript_Dropper", "pattern": "(CreateObject\\s*\\(\\s*[\"']WScript\\.Shell[\"']\\)|powershell.*DownloadFile)", "severity": 80},
+    {"name": "Discord_Webhook_Exfil", "pattern": "(discord\\.com\\/api\\/webhooks\\/\\d+\\/[A-Za-z0-9_-]+)", "severity": 85},
+    {"name": "Telegram_Bot_Exfil", "pattern": "(api\\.telegram\\.org\\/bot\\d+:[A-Za-z0-9_-]+)", "severity": 85},
+    {"name": "Ransomware_Extension_Hunt", "pattern": "(\\.(locked|crypto|encrypt|decrypt|ransom))", "severity": 75},
+    {"name": "Shadow_Copies_Deletion", "pattern": "(vssadmin\\s+delete\\s+shadows|wmic\\s+shadowcopy\\s+delete)", "severity": 98},
+    {"name": "Persistence_RunKey", "pattern": "(Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run)", "severity": 70},
+    {"name": "Linux_Reverse_Bash", "pattern": "(/bin/(ba)?sh\\s+-i\\s+>&\\s+/dev/tcp/)", "severity": 95},
+    {"name": "Linux_Crontab_Persistence", "pattern": "(/etc/cron\\.(d|daily|hourly)|crontab\\s+-l)", "severity": 65}
+  ],
+  "phishing_indicators": {
+    "suspicious_subject_keywords": [
+      "urgent", "account suspended", "verify your account", "invoice attached",
+      "wire transfer", "payment confirmation", "password reset required",
+      "security notification", "crypto withdrawal", "irs notice"
+    ],
+    "suspicious_sender_patterns": [
+      "paypal.*support@", "netflix.*update@", "apple.*security@",
+      "google.*verify@", "microsoft.*admin@"
+    ],
+    "dangerous_attachment_extensions": [
+      ".exe", ".scr", ".vbs", ".hta", ".iso", ".img", ".docm", ".xlsm", ".jar", ".bat"
+    ]
+  }
+}

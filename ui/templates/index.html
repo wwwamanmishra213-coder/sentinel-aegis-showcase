@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SentinelAegis-X | Defense Command & Control</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css">
+  <link rel="icon" href="https://img.icons8.com/fluency/48/shield.png" type="image/png">
+</head>
+<body>
+
+  <header>
+    <div class="logo-group">
+      <img src="https://img.icons8.com/fluency/96/shield.png" alt="Sentinel Logo" class="shield-icon">
+      <div>
+        <div class="system-title">SentinelAegis-X Defense Engine</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted);">Autonomous Triage & Human-Authorized Remediation</div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span class="badge-gate">⚠️ ZERO UNAPPROVED ACTIONS MODE</span>
+      <span style="font-size: 0.8rem; color: #10b981;">● Online</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Metric HUD -->
+    <div class="metrics-grid">
+      <div class="metric-card warn">
+        <div class="metric-title">Pending Threat Authorizations</div>
+        <div class="metric-value" id="stat-pending">0</div>
+      </div>
+      <div class="metric-card alert">
+        <div class="metric-title">Quarantined Vault Files</div>
+        <div class="metric-value" id="stat-vault">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">Learned Threat Signatures</div>
+        <div class="metric-value" id="stat-intel">0</div>
+      </div>
+      <div class="metric-card vault">
+        <div class="metric-title">Remediated / Dismissed</div>
+        <div class="metric-value" id="stat-resolved">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">Connected Phones / Devices</div>
+        <div class="metric-value" id="stat-devices">0</div>
+      </div>
+    </div>
+
+    <!-- Main Content Panels -->
+    <div class="main-panels">
+      <!-- Left: Pending Authorizations Queue -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🛡️</span> Threat Approval Queue (Standby Mode)
+          </div>
+          <button class="btn btn-dismiss" onclick="fetchIncidents()" style="font-size: 0.75rem;">↻ Refresh</button>
+        </div>
+        <div id="incidents-container">
+          <!-- Dynamic cards injected via dashboard.js -->
+        </div>
+      </div>
+
+      <!-- Right: Direct File Scanner & Threat Feed Sync -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🔬</span> On-Demand Threat Analyzer
+          </div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Drag any executable, script, or email to inspect PE headers, Shannon entropy, and suspicious API imports without running it. Developer self-tools are automatically whitelisted.
+        </p>
+
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" id="file-input" style="display: none;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">📂</div>
+          <div style="font-weight: 600; font-size: 0.9rem;">Drop suspicious file here or browse</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">.exe, .dll, .elf, .ps1, .sh, .eml, .bat</div>
+        </div>
+
+        <div id="scan-result" class="scan-result-card" style="min-height: 80px;">
+          <span style="color: var(--text-muted);">Awaiting file input for analysis...</span>
+        </div>
+
+        <div style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+          <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #fff;">🌐 Threat Intelligence Sync</div>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Pull latest malicious hashes and URLs from URLhaus and MalwareBazaar to expand adaptive defense rules.
+          </p>
+          <button class="btn btn-all" onclick="syncIntel()" style="width: 100%; justify-content: center;">
+            🔄 Sync Threat Feeds From Internet
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Row: Network Device Attribution & Gmail 30-60 Day Security Triage -->
+    <div class="main-panels" style="margin-top: 2rem;">
+      <!-- Left: Device & Mobile Phone Hunter -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📱</span> Network Device & Mobile Phone Hunter (Wi-Fi / LAN)
+          </div>
+          <button class="btn btn-all" onclick="scanNetworkSubnet()" style="font-size: 0.75rem;">🔍 Scan Wi-Fi Subnet</button>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Detects all phones and devices linked to your network, attributes self-workstation vs unknown foreign mobile phones, and flags unknown MAC/IP linkages.
+        </p>
+        <div id="devices-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="color: var(--text-muted); font-size: 0.85rem;">Loading active network devices...</div>
+        </div>
+      </div>
+
+      <!-- Right: Gmail 30-60 Day Security Triage -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📧</span> Gmail Security & Unauthorized Device Auditor
+          </div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Monitors 3 target Google accounts for 30-60 day security alerts ("New device signed in", unauthorized IPs, suspicious access):
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+          <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 6px; border-left: 3px solid #00f2fe;">
+            <div style="font-weight: 600; font-size: 0.85rem;">aman20770101@gmail.com</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Edge Browser Session • Target Window: Past 60 Days</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 6px; border-left: 3px solid #00f2fe;">
+            <div style="font-weight: 600; font-size: 0.85rem;">cornela778@gmail.com</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Edge Browser Session • Target Window: Past 60 Days</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 6px; border-left: 3px solid #00f2fe;">
+            <div style="font-weight: 600; font-size: 0.85rem;">rammishra9991@gmail.com</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Edge Browser Session • Target Window: Past 60 Days</div>
+          </div>
+        </div>
+
+        <button class="btn btn-all" onclick="auditEmails()" style="width: 100%; justify-content: center; margin-bottom: 0.75rem;">
+          ⚡ Audit 30-60 Day Security Alerts
+        </button>
+        <div id="email-audit-result" style="font-size: 0.8rem; color: var(--text-muted); padding: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 4px;">
+          Ready to triage security notifications and device linkage reports.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="margin-top: auto; padding: 1.5rem; text-align: center; font-size: 0.75rem; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05);">
+    SentinelAegis-X • Defensive Security Engineering Framework • Windows & Kali Linux Target Defense
+  </footer>
+
+  <script src="/static/js/dashboard.js"></script>
+  <script>
+    async function syncIntel() {
+      try {
+        const res = await fetch('/api/intel/sync', { method: 'POST' });
+        const data = await res.json();
+        alert(`Threat feeds synced! Added ${data.added_hashes} new malware hashes and ${data.added_urls} phishing URLs.`);
+        fetchStats();
+      } catch (e) {
+        alert('Sync error: ' + e);
+      }
+    }
+  </script>
+</body>
+</html>

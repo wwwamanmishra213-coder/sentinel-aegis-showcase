@@ -1,0 +1,140 @@
+{
+  "system": {
+    "name": "SentinelAegis-X",
+    "version": "1.1.0",
+    "mode": "HUMAN_AUTHORIZATION_REQUIRED",
+    "log_level": "INFO",
+    "listen_host": "127.0.0.1",
+    "listen_port": 8800
+  },
+  "discord": {
+    "enabled": true,
+    "webhook_url": "https://discord.com/api/webhooks/YOUR_PUBLIC_DEMO_WEBHOOK",
+    "bot_token": "YOUR_DISCORD_BOT_TOKEN_OPTIONAL",
+    "alert_channel_id": "",
+    "notify_on_detection": true,
+    "notify_on_unknown_device": true,
+    "mention_role_id": ""
+  },
+  "developer_whitelist": {
+    "trusted_paths": [
+      "c:\\Users\\wwwam\\Downloads\\anti hacking",
+      "c:\\Users\\wwwam\\Downloads\\anti hacking\\*",
+      "~/Downloads/anti hacking/*",
+      "~/dev/*",
+      "~/projects/*"
+    ],
+    "trusted_hashes": [],
+    "trusted_process_names": [
+      "python.exe",
+      "uvicorn.exe",
+      "code.exe",
+      "git.exe",
+      "powershell.exe"
+    ],
+    "auto_exempt_self_workspace": true
+  },
+  "device_monitoring": {
+    "enabled": true,
+    "subnet_range": "192.168.1.0/24",
+    "scan_interval_seconds": 30,
+    "known_devices": [
+      {
+        "name": "Local Host (My Workstation)",
+        "ip": "192.168.1.4",
+        "role": "SELF"
+      },
+      {
+        "name": "Default Gateway (Home Wi-Fi Router)",
+        "ip": "192.168.1.1",
+        "mac": "64-f8-8a-1c-47-5f",
+        "role": "GATEWAY"
+      }
+    ],
+    "alert_on_unknown_mac": true
+  },
+  "monitoring": {
+    "file_system": {
+      "enabled": true,
+      "watch_paths": [
+        "~/Downloads",
+        "~/Desktop",
+        "~/AppData/Local/Temp",
+        "/tmp",
+        "/var/tmp"
+      ],
+      "extensions": [
+        ".exe",
+        ".dll",
+        ".sys",
+        ".ps1",
+        ".vbs",
+        ".bat",
+        ".cmd",
+        ".sh",
+        ".elf",
+        ".bin",
+        ".py",
+        ".js",
+        ".hta",
+        ".scr",
+        ".pif"
+      ],
+      "max_file_size_mb": 150
+    },
+    "network": {
+      "enabled": true,
+      "poll_interval_seconds": 5,
+      "alert_on_new_remote_conn": true,
+      "suspicious_ports": [
+        4444,
+        5555,
+        6666,
+        1337,
+        8888,
+        9999,
+        31337,
+        7777,
+        8081,
+        1080
+      ],
+      "rogue_ap_arp_check": true
+    },
+    "email": {
+      "enabled": true,
+      "watch_eml_directory": "./intel_cache/incoming_mail",
+      "scan_days_back": 60,
+      "target_accounts": [
+        {
+          "email": "client-demo-1@example.com",
+          "provider": "gmail"
+        },
+        {
+          "email": "client-demo-2@example.com",
+          "provider": "gmail"
+        }
+      ]
+    }
+  },
+  "remediation": {
+    "vault_path": "./vault",
+    "xor_key": 165,
+    "auto_execute": false,
+    "linux_fightback": {
+      "iptables_isolate": true,
+      "tcpkill_enabled": true,
+      "auditd_integration": false
+    },
+    "windows_defense": {
+      "netsh_firewall_block": true,
+      "taskkill_tree": true
+    }
+  },
+  "intelligence": {
+    "enable_online_feeds": true,
+    "urlhaus_api": "https://urlhaus-api.abuse.ch/v1/urls/recent/",
+    "bazaar_recent_api": "https://mb-api.abuse.ch/api/v1/",
+    "cache_ttl_hours": 24,
+    "local_knowledge_base": "./intel_cache/learned_patterns.json"
+  }
+}
